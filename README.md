@@ -40,19 +40,20 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
 
 
 ## **You can test my RESTful application with these routes:**
-    * [HOME](https://conference-app-spring-boot.herokuapp.com/)
-    * [/sessions](https://conference-app-spring-boot.herokuapp.com/api/v1/sessions)
-    * [/speakers](https://conference-app-spring-boot.herokuapp.com/api/v1/speakers)
-    * [/attendees](https://conference-app-spring-boot.herokuapp.com/api/v1/attendees)
-    * [/pricings](https://conference-app-spring-boot.herokuapp.com/api/v1/pricings)
-    * [/tickets](https://conference-app-spring-boot.herokuapp.com/api/v1/tickets)
-    * [/slots](https://conference-app-spring-boot.herokuapp.com/api/v1/slots)
-    * [/tags](https://conference-app-spring-boot.herokuapp.com/api/v1/tags)
-    * [/workshops](https://conference-app-spring-boot.herokuapp.com/api/v1/workshops)
-    * [/tickets/types](https://conference-app-spring-boot.herokuapp.com/api/v1/tickets/types)
-    * [/attendees/tickets](https://conference-app-spring-boot.herokuapp.com/api/v1/attendees/tickets)
-    * [/discount/codes](https://conference-app-spring-boot.herokuapp.com/api/v1/discount/codes)
-    * [/sessions/schedules](https://conference-app-spring-boot.herokuapp.com/api/v1/sessions/schedules)
+
+   * [HOME](https://conference-app-spring-boot.herokuapp.com/)
+   * [/sessions](https://conference-app-spring-boot.herokuapp.com/api/v1/sessions)
+   * [/speakers](https://conference-app-spring-boot.herokuapp.com/api/v1/speakers)
+   * [/attendees](https://conference-app-spring-boot.herokuapp.com/api/v1/attendees)
+   * [/pricings](https://conference-app-spring-boot.herokuapp.com/api/v1/pricings)
+   * [/tickets](https://conference-app-spring-boot.herokuapp.com/api/v1/tickets)
+   * [/slots](https://conference-app-spring-boot.herokuapp.com/api/v1/slots)
+   * [/tags](https://conference-app-spring-boot.herokuapp.com/api/v1/tags)
+   * [/workshops](https://conference-app-spring-boot.herokuapp.com/api/v1/workshops)
+   * [/tickets/types](https://conference-app-spring-boot.herokuapp.com/api/v1/tickets/types)
+   * [/attendees/tickets](https://conference-app-spring-boot.herokuapp.com/api/v1/attendees/tickets)
+   * [/discount/codes](https://conference-app-spring-boot.herokuapp.com/api/v1/discount/codes)
+   * [/sessions/schedules](https://conference-app-spring-boot.herokuapp.com/api/v1/sessions/schedules)
     
 ## Screens
 
