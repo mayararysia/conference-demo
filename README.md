@@ -1,6 +1,6 @@
 # RESTful  Application  Programming Interface (API) with Spring Boot: Conference Demo
 
-Training with Opinionated Framework: [Spring Boot](https://spring.io/projects/spring-boot).
+Training with Spring Boot's opinionated framework: [Spring Boot](https://spring.io/projects/spring-boot).
 
 ## About this Project
 
