@@ -74,7 +74,7 @@ CREATE TABLE sessions
     session_name        varchar(80)   NOT NULL,
     session_description varchar(1024) NOT NULL,
     session_length      integer       NOT NULL,
-	CONSTRAINT  session_pkey PRIMARY KEY (session_id)
+	CONSTRAINT  sessions_pk PRIMARY KEY (session_id)
 );
 
 CREATE TABLE session_schedule (

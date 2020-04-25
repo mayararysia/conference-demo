@@ -11,13 +11,11 @@ Training with Opinionated Framework: [Spring Boot](https://spring.io/projects/sp
 
 ## Why?
 
-This project is part of my studies portfolio, so, feel free to contribute with improvements and updates.
+This project is part of my studies portfolio, so, feel free to contribute.
 
 Email-me: mayara.ryzia@gmail.com | mral1@ifal.edu.br
 
 Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](https://www.linkedin.com/in/rysia/).
-
-It's free!
 
 ## Requirements
 

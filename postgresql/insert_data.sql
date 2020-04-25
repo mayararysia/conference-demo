@@ -330,13 +330,26 @@ VALUES (1,'More Effective Agile Practices','','','Cedar',50),
 INSERT INTO attendees (attendee_id, first_name, last_name, title, company, email, phone_number)
 VALUES (1, 'Mayara','Lima','Spring Framework','Student', 'mayara.ryzia@gmail.com', '5582944554478');
 
+INSERT INTO discount_codes (discount_code_id, discount_code, discount_name, discount_type, discount_amount)
+VALUES (1, 'M','Lima','L', 30);
+
+INSERT INTO session_tags (session_id, tag_id)
+VALUES (91, 12);
+
+INSERT INTO attendee_tickets (attendee_ticket_id, attendee_id, ticket_price_id, discount_code_id, net_price)
+VALUES (1, 1, 9, 1, 10);
+
+INSERT INTO workshop_registrations (workshop_id, attendee_ticket_id)
+VALUES (1, 1);
+
+INSERT INTO workshop_speakers (workshop_id, speaker_id)
+VALUES (1, 37);
+
+select setval('sessions_session_id_seq',COALESCE((select max(session_id) + 1 from sessions), 1));
+select setval('pricing_categories_id_seq',COALESCE((select max(id) + 1 from pricing_categories), 1));
+select setval('ticket_types_id_seq',COALESCE((select max(id) + 1 from ticket_types), 1));
 select setval('attendees_attendee_id_seq',COALESCE((select max(attendee_id) + 1 from attendees), 1));
 select setval('attendee_tickets_attendee_ticket_id_seq',COALESCE((select max(attendee_ticket_id) + 1 from attendee_tickets), 1));
 select setval('discount_codes_discount_code_id_seq',COALESCE((select max(discount_code_id) + 1 from discount_codes), 1));
 select setval('session_schedule_schedule_id_seq',COALESCE((select max(schedule_id) + 1 from session_schedule), 1));
 select setval('sessions_session_id_seq',COALESCE((select max(session_id) + 1 from sessions), 1));
-select setval('speakers_speaker_id_seq',COALESCE((select max(speaker_id) + 1 from speakers), 1));
-select setval('tags_tag_id_seq',COALESCE((select max(tag_id) + 1 from tags), 1));
-select setval('ticket_prices_ticket_price_id_seq',COALESCE((select max(ticket_price_id) + 1 from ticket_prices), 1));
-select setval('time_slots_time_slot_id_seq',COALESCE((select max(time_slot_id) + 1 from time_slots), 1));
-select setval('workshops_workshop_id_seq',COALESCE((select max(workshop_id) + 1 from workshops), 1));
