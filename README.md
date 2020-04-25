@@ -4,7 +4,7 @@ Training with Opinionated Framework: [Spring Boot](https://spring.io/projects/sp
 
 ## About this Project
 
-* Spring Boot and Spring Data JPA to do CRUD operations against a PostgreSQL database.
+* Spring Boot and Spring Data JPA to do CRUD operations in the PostgreSQL database.
 * Based at Spring Framework course of [Pluralsight](https://www.pluralsight.com/) and contains my adaptations.
 * **Development Environment: IntelliJ IDEA Version 2018.3.6** 
 * 100% pure Java Code
