@@ -38,7 +38,8 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
         * Comment the data in the `config/PersistenceConfiguration.java` class
 * Open Postman and test the routes on Port 5050. For example: `http://localhost:5050/`
 
-* **You can test my RESTful application with these routes:**
+
+## **You can test my RESTful application with these routes:**
     * [HOME](https://conference-app-spring-boot.herokuapp.com/)
     * [/sessions](https://conference-app-spring-boot.herokuapp.com/api/v1/sessions)
     * [/speakers](https://conference-app-spring-boot.herokuapp.com/api/v1/speakers)
