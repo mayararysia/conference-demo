@@ -1,4 +1,4 @@
-# RESTful  Application with Spring Boot: Conference Demo
+# RESTful  Application  Programming Interface (API) with Spring Boot: Conference Demo
 
 Training with Opinionated Framework: [Spring Boot](https://spring.io/projects/spring-boot).
 
@@ -38,8 +38,29 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
         * Comment the data in the `config/PersistenceConfiguration.java` class
 * Open Postman and test the routes on Port 5050. For example: `http://localhost:5050/`
 
+* **You can test my RESTful application with these routes:**
+    * [HOME](https://conference-app-spring-boot.herokuapp.com/)
+    * [/sessions](https://conference-app-spring-boot.herokuapp.com/api/v1/sessions)
+    * [/speakers](https://conference-app-spring-boot.herokuapp.com/api/v1/speakers)
+    * [/attendees](https://conference-app-spring-boot.herokuapp.com/api/v1/attendees)
+    * [/pricings](https://conference-app-spring-boot.herokuapp.com/api/v1/pricings)
+    * [/tickets](https://conference-app-spring-boot.herokuapp.com/api/v1/tickets)
+    * [/slots](https://conference-app-spring-boot.herokuapp.com/api/v1/slots)
+    * [/tags](https://conference-app-spring-boot.herokuapp.com/api/v1/tags)
+    * [/workshops](https://conference-app-spring-boot.herokuapp.com/api/v1/workshops)
+    * [/tickets/types](https://conference-app-spring-boot.herokuapp.com/api/v1/tickets/types)
+    * [/attendees/tickets](https://conference-app-spring-boot.herokuapp.com/api/v1/attendees/tickets)
+    * [/discount/codes](https://conference-app-spring-boot.herokuapp.com/api/v1/discount/codes)
+    * [/sessions/schedules](https://conference-app-spring-boot.herokuapp.com/api/v1/sessions/schedules)
+    
 ## Screens
 
+*LOCALHOST*
 ![starting](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/starting-main.png)
 ![postman](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/postman.png)
 
+*CLOUD DEPLOYMENT*
+![heroku](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/heroku.png)
+
+*WAR DEPLOYMENT*
+![container](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/container.png)

@@ -11,7 +11,7 @@ public class PersistenceConfiguration {
 //    @Bean
 //    public DataSource dataSource(){
 //        DataSourceBuilder builder = DataSourceBuilder.create();
-//        builder.url("jdbc:postgresql://localhost:5432/conference");
+//        builder.url("jdbc:postgresql://localhost:5432/postgres");
 //        builder.username("");
 //        builder.password("");
 //        return builder.build();
