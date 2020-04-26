@@ -1,11 +1,11 @@
 # RESTful  Application  Programming Interface (API) with Spring Boot: Conference Demo
 
-Training with Spring Boot's opinionated framework: [Spring Boot](https://spring.io/projects/spring-boot).
+Training with [Spring Boot](https://spring.io/projects/spring-boot)'s opinionated framework.
 
 ## About this Project
 
 * Spring Boot and Spring Data JPA to do CRUD operations in the PostgreSQL database.
-* Based at Spring Framework course of [Pluralsight](https://www.pluralsight.com/) and contains my adaptations.
+* Based on the Spring Framework course of [Pluralsight](https://www.pluralsight.com/) and contains my adaptations.
 * **Development Environment: IntelliJ IDEA Version 2018.3.6** 
 * 100% pure Java Code
 
@@ -25,18 +25,18 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
 - Your favorite IDE
 - Maven 3+
 
-## How to use?
+## How to use it?
 
 * Clone the project or download
-* Run the sql files from the **postgresql** folder in an administration tool of your choice
+* Run the SQL files from the **PostgreSQL** folder in an administration tool of your choice
 * To Import the Project into IntelliJ or Eclipse as a Maven Project
 * Database configuration:
     * You can put your  database user   and database password  in the `config/PersistenceConfiguration.java` class
     * You can use the database configuration in `resources/application.properties`
-        * Remove comments from the datasource
+        * Remove comments from the data source
         * Create the variables in `Menu-> Run-> Edit Configurations-> Environment variables` **(IntelliJ)**
         * Comment the data in the `config/PersistenceConfiguration.java` class
-* Open Postman and test the routes on Port 5050. For example: `http://localhost:5050/`
+* Open Postman and test the routes on Port 5050. For example `http://localhost:5050/`
 
 
 ## **You can test my RESTful application with these routes:**
