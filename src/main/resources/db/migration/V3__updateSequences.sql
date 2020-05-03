@@ -1,0 +1,9 @@
+select setval('speakers_speaker_id_seq',COALESCE((select max(speaker_id) + 1 from speakers), 1));
+select setval('sessions_session_id_seq',COALESCE((select max(session_id) + 1 from sessions), 1));
+select setval('pricing_categories_id_seq',COALESCE((select max(id) + 1 from pricing_categories), 1));
+select setval('ticket_types_id_seq',COALESCE((select max(id) + 1 from ticket_types), 1));
+select setval('attendees_attendee_id_seq',COALESCE((select max(attendee_id) + 1 from attendees), 1));
+select setval('attendee_tickets_attendee_ticket_id_seq',COALESCE((select max(attendee_ticket_id) + 1 from attendee_tickets), 1));
+select setval('discount_codes_discount_code_id_seq',COALESCE((select max(discount_code_id) + 1 from discount_codes), 1));
+select setval('session_schedule_schedule_id_seq',COALESCE((select max(schedule_id) + 1 from session_schedule), 1));
+select setval('sessions_session_id_seq',COALESCE((select max(session_id) + 1 from sessions), 1));

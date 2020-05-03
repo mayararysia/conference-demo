@@ -16,6 +16,8 @@ public class HomeController {
     private String dev;
     @Value("${contact}")
     private String contact;
+    @Value("${app.nome}")
+    private String name;
 
     @GetMapping
     @RequestMapping
@@ -24,6 +26,7 @@ public class HomeController {
         map.put("app-version", appVersion);
         map.put("info-dev", dev);
         map.put("contact:", contact);
+        map.put("name: ", name);
         return map;
     }
 }
