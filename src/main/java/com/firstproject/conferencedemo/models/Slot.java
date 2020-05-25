@@ -22,7 +22,7 @@ public class Slot {
     @Column(name ="end_time")
     private Date endTime;
     @Column(name ="is_keynote_time_slot")
-    private Boolean isKeynoteTimeSlot;
+    private Boolean keynoteTimeSlot;
 
     @OneToMany(mappedBy = "slot")
     @JsonIgnore
@@ -65,11 +65,11 @@ public class Slot {
     }
 
     public Boolean getKeynoteTimeSlot() {
-        return isKeynoteTimeSlot;
+        return keynoteTimeSlot;
     }
 
     public void setKeynoteTimeSlot(Boolean keynoteTimeSlot) {
-        isKeynoteTimeSlot = keynoteTimeSlot;
+        keynoteTimeSlot = keynoteTimeSlot;
     }
 
     public List<SessionSchedule> getSessionSchedules() {

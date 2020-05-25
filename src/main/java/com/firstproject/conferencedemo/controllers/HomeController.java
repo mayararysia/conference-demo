@@ -24,9 +24,9 @@ public class HomeController {
     public Map getStatus() {
         Map map = new HashMap<String, String>();
         map.put("app-version", appVersion);
-        map.put("info-dev", dev);
-        map.put("contact:", contact);
-        map.put("name: ", name);
+        map.put("app-info-dev", dev);
+        map.put("app-contact:", contact);
+        map.put("app-name: ", name);
         return map;
     }
 }
