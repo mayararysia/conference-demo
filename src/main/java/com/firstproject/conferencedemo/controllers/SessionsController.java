@@ -56,13 +56,6 @@ public class SessionsController {
 
     private Session convertToEntity(SessionDTO sessionDTO) {
         Session session = modelMapper.map(sessionDTO, Session.class);
-        if (sessionDTO.getSessionId() != null) {
-            Session oldSession = sessionRepository.getOne(sessionDTO.getSessionId());
-            session.setTags(oldSession.getTags());
-            session.setSessionName(oldSession.getSessionName());
-            session.setSessionDescription(oldSession.getSessionDescription());
-            session.setSessionLength(oldSession.getSessionLength());
-        }
         return session;
     }
 }

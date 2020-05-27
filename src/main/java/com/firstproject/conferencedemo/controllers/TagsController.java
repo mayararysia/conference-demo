@@ -42,8 +42,7 @@ public class TagsController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Tag update(@PathVariable Long id, @RequestBody TagDTO tagDTO) {
-        Tag tag = convertToEntity(tagDTO);
+    public Tag update(@PathVariable Long id, @RequestBody Tag tag) {
         Tag existingTag = this.tagRepository.getOne(id);
         BeanUtils.copyProperties(tag, existingTag, "id");
         return this.tagRepository.saveAndFlush(existingTag);

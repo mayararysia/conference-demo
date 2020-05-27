@@ -58,12 +58,6 @@ public class SessionSchedulesController {
 
     private SessionSchedule convertToEntity(SessionScheduleDTO sessionScheduleDTO) {
         SessionSchedule sessionSchedule = modelMapper.map(sessionScheduleDTO, SessionSchedule.class);
-        if (sessionScheduleDTO.getId() != null) {
-            SessionSchedule oldSessionSchedule = sessionScheduleRepository.getOne(sessionScheduleDTO.getId());
-            sessionSchedule.setSlot(oldSessionSchedule.getSlot());
-            sessionSchedule.setSession(oldSessionSchedule.getSession());
-            sessionSchedule.setRoom(oldSessionSchedule.getRoom());
-        }
         return sessionSchedule;
     }
 }

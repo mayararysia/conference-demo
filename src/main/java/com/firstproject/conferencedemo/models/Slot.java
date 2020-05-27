@@ -1,5 +1,6 @@
 package com.firstproject.conferencedemo.models;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -15,10 +16,13 @@ public class Slot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "time_slot_id")
     private Long id;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     @Column(name ="time_slot_date")
     private Date timeSlotDate;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="HH:mm")
     @Column(name ="start_time")
     private Date startTime;
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="HH:mm")
     @Column(name ="end_time")
     private Date endTime;
     @Column(name ="is_keynote_time_slot")
@@ -69,7 +73,7 @@ public class Slot {
     }
 
     public void setKeynoteTimeSlot(Boolean keynoteTimeSlot) {
-        keynoteTimeSlot = keynoteTimeSlot;
+        this.keynoteTimeSlot = keynoteTimeSlot;
     }
 
     public List<SessionSchedule> getSessionSchedules() {

@@ -1,6 +1,5 @@
 package com.firstproject.conferencedemo.controllers;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.firstproject.conferencedemo.models.PricingCategory;
 import com.firstproject.conferencedemo.repositories.PricingCategoryRepository;
 import org.springframework.beans.BeanUtils;

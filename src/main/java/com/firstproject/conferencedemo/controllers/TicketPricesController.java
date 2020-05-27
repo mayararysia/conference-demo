@@ -1,8 +1,9 @@
 package com.firstproject.conferencedemo.controllers;
 
-import com.fasterxml.jackson.databind.util.BeanUtil;
+import com.firstproject.conferencedemo.dto.TicketPriceDTO;
 import com.firstproject.conferencedemo.models.TicketPrice;
 import com.firstproject.conferencedemo.repositories.TicketPriceRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,9 @@ import java.util.List;
 public class TicketPricesController {
     @Autowired
     private TicketPriceRepository ticketPriceRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @GetMapping
     @ResponseBody
@@ -31,7 +35,8 @@ public class TicketPricesController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TicketPrice create(@RequestBody final TicketPrice ticketPrice){
+    public TicketPrice create(@RequestBody final TicketPriceDTO ticketPriceDTO){
+        TicketPrice ticketPrice = convertToEntity(ticketPriceDTO);
         return this.ticketPriceRepository.saveAndFlush(ticketPrice);
     }
 
@@ -43,9 +48,15 @@ public class TicketPricesController {
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public TicketPrice update(@PathVariable Long id, @RequestBody TicketPrice ticketPrice){
+    public TicketPrice update(@PathVariable Long id, @RequestBody TicketPriceDTO ticketPriceDTO){
+        TicketPrice ticketPrice = convertToEntity(ticketPriceDTO);
         TicketPrice existingTicketPrice = this.ticketPriceRepository.getOne(id);
         BeanUtils.copyProperties(ticketPrice, existingTicketPrice, "ticket_price_id");
         return this.ticketPriceRepository.saveAndFlush(existingTicketPrice);
+    }
+
+    private TicketPrice convertToEntity(TicketPriceDTO ticketPriceDTO) {
+        TicketPrice ticketPrice = modelMapper.map(ticketPriceDTO, TicketPrice.class);
+        return ticketPrice;
     }
 }
