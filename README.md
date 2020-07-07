@@ -41,17 +41,19 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
 * Open Postman and test the routes on Port 5050. For example `http://localhost:5050/`
 
 ## **You can test my RESTful application with these routes:**
-
+   
+   * [Swagger Documentation](https://conference-app-spring-boot.herokuapp.com/swagger-ui.html)
+   * [Swagger API Docs](https://conference-app-spring-boot.herokuapp.com/v2/api-docs)
    * [HOME](https://conference-app-spring-boot.herokuapp.com/)
    * [/sessions](https://conference-app-spring-boot.herokuapp.com/api/v1/sessions)
    * [/speakers](https://conference-app-spring-boot.herokuapp.com/api/v1/speakers)
    * [/attendees](https://conference-app-spring-boot.herokuapp.com/api/v1/attendees)
-   * [/pricings](https://conference-app-spring-boot.herokuapp.com/api/v1/pricings)
+   * [/pricing/categories](https://conference-app-spring-boot.herokuapp.com/api/v1/pricing/categories)
    * [/tickets](https://conference-app-spring-boot.herokuapp.com/api/v1/tickets)
    * [/slots](https://conference-app-spring-boot.herokuapp.com/api/v1/slots)
    * [/tags](https://conference-app-spring-boot.herokuapp.com/api/v1/tags)
    * [/workshops](https://conference-app-spring-boot.herokuapp.com/api/v1/workshops)
-   * [/tickets/types](https://conference-app-spring-boot.herokuapp.com/api/v1/tickets/types)
+   * [/ticket/types](https://conference-app-spring-boot.herokuapp.com/api/v1/ticket/types)
    * [/attendees/tickets](https://conference-app-spring-boot.herokuapp.com/api/v1/attendees/tickets)
    * [/discount/codes](https://conference-app-spring-boot.herokuapp.com/api/v1/discount/codes)
    * [/sessions/schedules](https://conference-app-spring-boot.herokuapp.com/api/v1/sessions/schedules)
@@ -66,7 +68,7 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
 *LOCALHOST*
 
 ![starting](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/starting-main.png)
-![postman](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/postman.png)
+![postman](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/postman-v2.png)
 
 *CLOUD DEPLOYMENT*
 
@@ -76,7 +78,7 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
 *WAR DEPLOYMENT*
 
 
-![container](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/container.png)
+![container](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/container-v2.png)
 
 
 *ENTITY RELATIONSHIP DIAGRAM*
