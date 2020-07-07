@@ -9,8 +9,8 @@ Training with [Spring Boot](https://spring.io/projects/spring-boot)'s opinionate
 * **Development Environment: IntelliJ IDEA Version 2018.3.6** 
 * 100% pure Java Code
 * **Project Type:** Maven Project
-* **Group:** `com.firstproject.conferencedemo`
-* **Dependencies:** Web, JPA, PostgreSQL, Tomcat, FlywayDB
+* **Group:** `com.rysia.conferencedemo`
+* **Dependencies:** Web, JPA, PostgreSQL, Tomcat, FlywayDB, Springfox
 
 ## Why?
 
@@ -58,8 +58,12 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
     
 ## Screens
 
-*LOCALHOST*
+*API DOCUMENTATION*
 
+![documentation](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/swagger-ui.png)
+
+
+*LOCALHOST*
 
 ![starting](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/starting-main.png)
 ![postman](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/postman.png)
@@ -73,3 +77,8 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
 
 
 ![container](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/container.png)
+
+
+*ENTITY RELATIONSHIP DIAGRAM*
+
+![container](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/ERDiagram.png)
