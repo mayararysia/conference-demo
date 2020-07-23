@@ -50,7 +50,7 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
    * [/attendees](https://apirest-conference.herokuapp.com/api/v1/attendees)
    * [/pricing/categories](https://apirest-conference.herokuapp.com/api/v1/pricing/categories)
    * [/tickets](https://apirest-conference.herokuapp.com/api/v1/tickets)
-   * [/slots](https://capirest-conference.herokuapp.com/api/v1/slots)
+   * [/slots](https://apirest-conference.herokuapp.com/api/v1/slots)
    * [/tags](https://apirest-conference.herokuapp.com/api/v1/tags)
    * [/workshops](https://apirest-conference.herokuapp.com/api/v1/workshops)
    * [/ticket/types](https://apirest-conference.herokuapp.com/api/v1/ticket/types)
