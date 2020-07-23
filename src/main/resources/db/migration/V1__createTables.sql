@@ -102,9 +102,9 @@ CREATE TABLE session_schedule (
 	time_slot_id INTEGER NOT NULL,
 	session_id INTEGER NOT NULL,
 	room VARCHAR(30) NOT NULL,
-	CONSTRAINT session_schedule_pkey PRIMARY KEY (schedule_id),
-	CONSTRAINT session_schedule_session_id_fkey FOREIGN KEY (session_id) REFERENCES sessions(session_id),
-	CONSTRAINT session_schedule_time_slot_id_fkey FOREIGN KEY (time_slot_id) REFERENCES time_slots(time_slot_id)
+ 	CONSTRAINT session_schedule_pkey PRIMARY KEY (schedule_id),
+ 	CONSTRAINT session_schedule_session_id_fkey FOREIGN KEY (session_id) REFERENCES sessions(session_id),
+ 	CONSTRAINT session_schedule_time_slot_id_fkey FOREIGN KEY (time_slot_id) REFERENCES time_slots(time_slot_id)
 );
 
 CREATE TABLE tags
@@ -116,9 +116,7 @@ CREATE TABLE tags
 
 CREATE TABLE session_tags (
 	session_id INTEGER NOT NULL,
-	tag_id INTEGER NOT NULL,
-	CONSTRAINT session_tags_session_id_fkey FOREIGN KEY (session_id) REFERENCES sessions(session_id),
-	CONSTRAINT session_tags_tag_id_fkey FOREIGN KEY (tag_id) REFERENCES tags(tag_id)
+	tag_id INTEGER NOT NULL
 );
 
 CREATE TABLE speakers
@@ -135,9 +133,7 @@ CREATE TABLE speakers
 
 CREATE TABLE session_speakers (
 	session_id INTEGER NOT NULL,
-	speaker_id INTEGER NOT NULL,
-	CONSTRAINT session_speakers_speaker_id_fkey FOREIGN KEY (speaker_id) REFERENCES speakers(speaker_id),
-	CONSTRAINT session_speakers_session_id_fkey FOREIGN KEY (session_id) REFERENCES sessions(session_id)
+	speaker_id INTEGER NOT NULL
 );
 
 CREATE TABLE workshops
@@ -153,15 +149,11 @@ CREATE TABLE workshops
 
 CREATE TABLE workshop_speakers (
 	workshop_id INTEGER NOT NULL,
-	speaker_id INTEGER NOT NULL,
-	CONSTRAINT workshop_speakers_speaker_id_fkey FOREIGN KEY (speaker_id) REFERENCES speakers(speaker_id),
-	CONSTRAINT workshop_speakers_workshop_id_fkey FOREIGN KEY (workshop_id) REFERENCES workshops(workshop_id)
+	speaker_id INTEGER NOT NULL
 );
 
 CREATE TABLE workshop_registrations
 (
     workshop_id INTEGER NOT NULL,
-    attendee_ticket_id INTEGER NOT NULL,
-    CONSTRAINT workshops_fkey FOREIGN KEY (workshop_id) REFERENCES workshops (workshop_id),
-    CONSTRAINT attendee_tickets_fkey FOREIGN KEY (attendee_ticket_id) REFERENCES attendee_tickets (attendee_ticket_id)
+    attendee_ticket_id INTEGER NOT NULL
 );

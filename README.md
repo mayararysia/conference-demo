@@ -42,21 +42,21 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
 
 ## **You can test my RESTful application with these routes:**
    
-   * [Swagger Documentation](https://conference-app-spring-boot.herokuapp.com/swagger-ui.html)
-   * [Swagger API Docs](https://conference-app-spring-boot.herokuapp.com/v2/api-docs)
-   * [HOME](https://conference-app-spring-boot.herokuapp.com/)
-   * [/sessions](https://conference-app-spring-boot.herokuapp.com/api/v1/sessions)
-   * [/speakers](https://conference-app-spring-boot.herokuapp.com/api/v1/speakers)
-   * [/attendees](https://conference-app-spring-boot.herokuapp.com/api/v1/attendees)
-   * [/pricing/categories](https://conference-app-spring-boot.herokuapp.com/api/v1/pricing/categories)
-   * [/tickets](https://conference-app-spring-boot.herokuapp.com/api/v1/tickets)
-   * [/slots](https://conference-app-spring-boot.herokuapp.com/api/v1/slots)
-   * [/tags](https://conference-app-spring-boot.herokuapp.com/api/v1/tags)
-   * [/workshops](https://conference-app-spring-boot.herokuapp.com/api/v1/workshops)
-   * [/ticket/types](https://conference-app-spring-boot.herokuapp.com/api/v1/ticket/types)
-   * [/attendees/tickets](https://conference-app-spring-boot.herokuapp.com/api/v1/attendees/tickets)
-   * [/discount/codes](https://conference-app-spring-boot.herokuapp.com/api/v1/discount/codes)
-   * [/sessions/schedules](https://conference-app-spring-boot.herokuapp.com/api/v1/sessions/schedules)
+   * [Swagger Documentation](https://apirest-conference.herokuapp.com/swagger-ui.html)
+   * [Swagger API Docs](https://apirest-conference.herokuapp.com/v2/api-docs)
+   * [HOME](https://apirest-conference.herokuapp.com/)
+   * [/sessions](https://apirest-conference.herokuapp.com/api/v1/sessions)
+   * [/speakers](https://apirest-conference.herokuapp.com/api/v1/speakers)
+   * [/attendees](https://apirest-conference.herokuapp.com/api/v1/attendees)
+   * [/pricing/categories](https://apirest-conference.herokuapp.com/api/v1/pricing/categories)
+   * [/tickets](https://apirest-conference.herokuapp.com/api/v1/tickets)
+   * [/slots](https://capirest-conference.herokuapp.com/api/v1/slots)
+   * [/tags](https://apirest-conference.herokuapp.com/api/v1/tags)
+   * [/workshops](https://apirest-conference.herokuapp.com/api/v1/workshops)
+   * [/ticket/types](https://apirest-conference.herokuapp.com/api/v1/ticket/types)
+   * [/attendees/tickets](https://apirest-conference.herokuapp.com/api/v1/attendees/tickets)
+   * [/discount/codes](https://apirest-conference.herokuapp.com/api/v1/discount/codes)
+   * [/sessions/schedules](https://apirest-conference.herokuapp.com/api/v1/sessions/schedules)
     
 ## Screens
 
@@ -83,4 +83,4 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
 
 *ENTITY RELATIONSHIP DIAGRAM*
 
-![container](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/ERDiagram.png)
+![container](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/er-diagram.png)
