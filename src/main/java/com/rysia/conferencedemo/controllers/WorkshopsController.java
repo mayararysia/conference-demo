@@ -1,15 +1,19 @@
 package com.rysia.conferencedemo.controllers;
 
+import com.rysia.conferencedemo.dto.WorkshopDTO;
 import com.rysia.conferencedemo.models.Workshop;
 import com.rysia.conferencedemo.repositories.WorkshopRepository;
 import io.swagger.annotations.ApiOperation;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpServerErrorException;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -18,49 +22,58 @@ public class WorkshopsController {
     @Autowired
     private WorkshopRepository workshopRepository;
 
-    @ApiOperation(value="LIST ALL WORKSHOPS")
+    @Autowired
+    private ModelMapper modelMapper;
+
+    @ApiOperation(value = "LIST ALL WORKSHOPS")
     @GetMapping("/workshops")
-    public List<Workshop> list(){
-        return this.workshopRepository.findAll();
+    public ResponseEntity<List<Workshop>> list() {
+        List<Workshop> workshops = this.workshopRepository.findAll();
+        return workshops.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<List<Workshop>>(workshops, HttpStatus.OK);
     }
 
-    @ApiOperation(value=" GET A UNIQUE WORKSHOP")
+    @ApiOperation(value = " GET A UNIQUE WORKSHOP")
     @GetMapping("/workshop/{id}")
-    public Workshop get(@PathVariable Long id){
-        Workshop workshop = this.workshopRepository.getOne(id);
-        if(workshop == null)
-            throw new HttpServerErrorException(HttpStatus.NOT_FOUND);
-        return workshop;
+    public ResponseEntity<Workshop> get(@PathVariable(value = "id") Long id) {
+        Optional<Workshop> optionalWorkshop = this.workshopRepository.findById(id);
+        return !optionalWorkshop.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<Workshop>(optionalWorkshop.get(), HttpStatus.OK);
     }
 
-    @ApiOperation(value="CREATE A WORKSHOP")
+    @ApiOperation(value = "CREATE A WORKSHOP")
     @PostMapping("/workshop")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Workshop create(@RequestBody final Workshop workshop){
-        if(workshop == null)
-            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
-        return this.workshopRepository.saveAndFlush(workshop);
+    public ResponseEntity<WorkshopDTO> create(@RequestBody @Valid final Workshop workshop) {
+        return new ResponseEntity<WorkshopDTO>(convertEntityToDTO(this.workshopRepository.saveAndFlush(workshop)), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value="UPDATE A WORKSHOP")
+    @ApiOperation(value = "UPDATE A WORKSHOP")
     @RequestMapping(value = "/workshop/{id}", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.OK)
-    public Workshop update(@PathVariable Long id, @RequestBody final Workshop workshop){
-        if(id == null || workshop == null)
-            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
-        Workshop existingWorkshop = this.workshopRepository.getOne(id);
-        if(existingWorkshop == null)
-            throw new HttpServerErrorException(HttpStatus.NOT_FOUND);
-        BeanUtils.copyProperties(workshop, existingWorkshop, "id");
-        return this.workshopRepository.saveAndFlush(existingWorkshop);
+    public ResponseEntity<Workshop> update(@PathVariable(value = "id") Long id, @RequestBody @Valid final Workshop workshop) {
+        Optional<Workshop> optionalWorkshop = this.workshopRepository.findById(id);
+        boolean existsWorshop = optionalWorkshop.isPresent();
+        Workshop existingWorkshop = new Workshop();
+
+        if (existsWorshop) {
+            existingWorkshop = optionalWorkshop.get();
+            BeanUtils.copyProperties(workshop, existingWorkshop, "id");
+        }
+        return existsWorshop ? new ResponseEntity<Workshop>(this.workshopRepository
+                .saveAndFlush(existingWorkshop), HttpStatus.ACCEPTED) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @ApiOperation(value="DELETE A WORKSHOP")
+    @ApiOperation(value = "DELETE A WORKSHOP")
     @RequestMapping(value = "/workshop/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable Long id){
-        if(id == null)
-            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
-        this.workshopRepository.deleteById(id);
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+        if (Optional.ofNullable(this.workshopRepository.findById(id)).isPresent()) {
+            this.workshopRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+
+    private WorkshopDTO convertEntityToDTO(Workshop workshop) {
+        return modelMapper.map(workshop, WorkshopDTO.class);
     }
 }

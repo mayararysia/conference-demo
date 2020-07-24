@@ -6,9 +6,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -17,38 +20,51 @@ public class SpeakersController {
     @Autowired
     private SpeakerRepository speakerRepository;
 
-    @ApiOperation(value="LIST ALL SPEAKERS")
+    @ApiOperation(value = "LIST ALL SPEAKERS")
     @GetMapping("/speakers")
-    public List<Speaker> list() {
-        return this.speakerRepository.findAll();
+    public ResponseEntity<List<Speaker>> list() {
+        List<Speaker> speakers = this.speakerRepository.findAll();
+        return speakers.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<List<Speaker>>(speakers, HttpStatus.OK);
     }
 
-    @ApiOperation(value="GET A UNIQUE SPEAKER")
+    @ApiOperation(value = "GET A UNIQUE SPEAKER")
     @GetMapping("/speaker/{id}")
-    public Speaker get(@PathVariable Long id) {
-        return this.speakerRepository.getOne(id);
+    public ResponseEntity<Speaker> get(@PathVariable(value = "id") Long id) {
+        Optional<Speaker> optionalSpeaker = this.speakerRepository.findById(id);
+        return !optionalSpeaker.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<Speaker>(optionalSpeaker.get(), HttpStatus.OK);
     }
 
-    @ApiOperation(value="CREATE A SPEAKER")
+    @ApiOperation(value = "CREATE A SPEAKER")
     @PostMapping("/speaker")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Speaker create(@RequestBody final Speaker speaker) {
-        return this.speakerRepository.saveAndFlush(speaker);
+    public ResponseEntity<Speaker> create(@RequestBody @Valid final Speaker speaker) {
+        return new ResponseEntity<Speaker>(this.speakerRepository.saveAndFlush(speaker), HttpStatus.CREATED);
     }
 
-    @ApiOperation(value="DELETE A SPEAKER")
-    @RequestMapping(value = "/speaker/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable Long id) {
-        this.speakerRepository.deleteById(id);
-    }
-
-    @ApiOperation(value="UPDATE A SPEAKER")
+    @ApiOperation(value = "UPDATE A SPEAKER")
     @RequestMapping(value = "/speaker/{id}", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.OK)
-    public Speaker update(@PathVariable Long id, @RequestBody Speaker speaker) {
-        Speaker existingSpeaker = this.speakerRepository.getOne(id);
-        BeanUtils.copyProperties(speaker, existingSpeaker, "speaker_id");
-        return this.speakerRepository.saveAndFlush(existingSpeaker);
+    public ResponseEntity<Speaker> update(@PathVariable(value = "id") Long id, @RequestBody @Valid Speaker speaker) {
+        Optional<Speaker> optionalSpeaker = this.speakerRepository.findById(id);
+        Speaker existingSpeaker = new Speaker();
+        boolean existsSpeaker = optionalSpeaker.isPresent();
+
+        if (existsSpeaker) {
+            existingSpeaker = optionalSpeaker.get();
+            BeanUtils.copyProperties(speaker, existingSpeaker, "id");
+            existingSpeaker.setSpeakerId(id);
+        }
+        return existsSpeaker ? new ResponseEntity<Speaker>(this.speakerRepository.saveAndFlush(existingSpeaker),
+                HttpStatus.ACCEPTED) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @ApiOperation(value = "DELETE A SPEAKER")
+    @RequestMapping(value = "/speaker/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+        if (Optional.ofNullable(this.speakerRepository.findById(id)).isPresent()) {
+            this.speakerRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

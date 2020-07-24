@@ -6,10 +6,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpServerErrorException;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -20,47 +22,49 @@ public class TicketTypesController {
 
     @ApiOperation(value = "LIST ALL TICKET TYPES")
     @GetMapping("/types")
-    public List<TicketType> list() {
-        return this.ticketTypeRepository.findAll();
+    public ResponseEntity<List<TicketType>> list() {
+        List<TicketType> ticketTypes = this.ticketTypeRepository.findAll();
+        return ticketTypes.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<List<TicketType>>(ticketTypes, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE TICKET TYPE")
     @GetMapping("/type/{id}")
-    public TicketType get(@PathVariable Long id) {
-        TicketType existingTicketType = this.ticketTypeRepository.getOne(id);
-        if (id == null)
-            throw new HttpServerErrorException(HttpStatus.NOT_FOUND);
-        return existingTicketType;
+    public ResponseEntity<TicketType> get(@PathVariable(value = "id") Long id) {
+        Optional<TicketType> optionalTicketType = this.ticketTypeRepository.findById(id);
+        return !optionalTicketType.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : new ResponseEntity<TicketType>(optionalTicketType.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE A TICKET TYPE")
     @PostMapping("/type")
-    @ResponseStatus(HttpStatus.CREATED)
-    public TicketType create(@RequestBody final TicketType ticketType) {
-        if (ticketType == null)
-            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
-        return this.ticketTypeRepository.saveAndFlush(ticketType);
+    public ResponseEntity<TicketType> create(@RequestBody @Valid final TicketType ticketType) {
+        return new ResponseEntity<TicketType>(this.ticketTypeRepository.saveAndFlush(ticketType), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "UPDATE A TICKET TYPE")
     @RequestMapping(value = "/type/{id}", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.OK)
-    public TicketType update(@PathVariable Long id, @RequestBody TicketType ticketType) {
-        if (id == null || ticketType == null)
-            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
-        TicketType existingTicketType = this.ticketTypeRepository.getOne(id);
-        if (existingTicketType == null)
-            throw new HttpServerErrorException(HttpStatus.NOT_FOUND);
-        BeanUtils.copyProperties(ticketType, existingTicketType, "id");
-        return this.ticketTypeRepository.saveAndFlush(existingTicketType);
+    public ResponseEntity<TicketType> update(@PathVariable(value = "id") Long id, @RequestBody @Valid TicketType ticketType) {
+        Optional<TicketType> optionalTicketType = this.ticketTypeRepository.findById(id);
+        TicketType existingTicketType = new TicketType();
+        boolean existsTicket = optionalTicketType.isPresent();
+
+        if (existsTicket) {
+            existingTicketType = optionalTicketType.get();
+            BeanUtils.copyProperties(ticketType, existingTicketType, "id");
+        }
+
+        return existsTicket ? new ResponseEntity<TicketType>(this.ticketTypeRepository.saveAndFlush(existingTicketType),
+                HttpStatus.ACCEPTED) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @ApiOperation(value = "DELETE A TICKET TYPE")
     @RequestMapping(value = "/type/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable Long id) {
-        if (id == null)
-            throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR);
-        this.ticketTypeRepository.deleteById(id);
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+        if (Optional.ofNullable(this.ticketTypeRepository.findById(id)).isPresent()) {
+            this.ticketTypeRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

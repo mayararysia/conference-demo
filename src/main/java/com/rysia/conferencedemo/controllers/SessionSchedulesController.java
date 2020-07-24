@@ -8,9 +8,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -25,44 +28,59 @@ public class SessionSchedulesController {
 
     @ApiOperation(value = "LIST ALL SESSIONS SCHEDULES")
     @GetMapping("/sessions/schedules")
-    public List<SessionSchedule> list() {
-        return this.sessionScheduleRepository.findAll();
+    public ResponseEntity<List<SessionSchedule>> list() {
+        List<SessionSchedule> sessionSchedules = this.sessionScheduleRepository.findAll();
+        return sessionSchedules.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<List<SessionSchedule>>(sessionSchedules, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE SESSION SCHEDULE")
     @GetMapping("/session/schedule/{id}")
-    @ResponseBody
-    public SessionSchedule get(@PathVariable Long id) {
-        return this.sessionScheduleRepository.getOne(id);
+    public ResponseEntity<SessionSchedule> get(@PathVariable(value = "id") Long id) {
+        Optional<SessionSchedule> optionalSessionSchedule = this.sessionScheduleRepository.findById(id);
+        return !optionalSessionSchedule.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<SessionSchedule>(optionalSessionSchedule.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE A SESSION SCHEDULE")
     @PostMapping("/session/schedule")
-    @ResponseStatus(HttpStatus.CREATED)
-    public SessionSchedule create(@RequestBody final SessionScheduleDTO sessionScheduleDTO) {
-        SessionSchedule sessionSchedule = convertToEntity(sessionScheduleDTO);
-        return this.sessionScheduleRepository.saveAndFlush(sessionSchedule);
+    public ResponseEntity<SessionScheduleDTO> create(@RequestBody @Valid final SessionScheduleDTO sessionScheduleDTO) {
+        return new ResponseEntity<SessionScheduleDTO>(convertEntityToDTO(this.sessionScheduleRepository
+                .saveAndFlush(convertToEntity(sessionScheduleDTO))), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "UPDATE A SESSION SCHEDULE")
     @RequestMapping(value = "/session/schedule/{id}", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.OK)
-    public SessionSchedule update(@PathVariable Long id, @RequestBody SessionScheduleDTO sessionScheduleDTO) {
-        SessionSchedule sessionSchedule = convertToEntity(sessionScheduleDTO);
-        SessionSchedule existingSessionSchedule = this.sessionScheduleRepository.getOne(id);
-        BeanUtils.copyProperties(sessionSchedule, existingSessionSchedule, "id");
-        return this.sessionScheduleRepository.saveAndFlush(existingSessionSchedule);
+    public ResponseEntity<SessionSchedule> update(@PathVariable(value = "id") Long id, @RequestBody @Valid SessionScheduleDTO sessionScheduleDTO) {
+        Optional<SessionSchedule> optionalSessionSchedule = this.sessionScheduleRepository.findById(id);
+        boolean existsSessionSchedule = optionalSessionSchedule.isPresent();
+        SessionSchedule existingSessionSchedule = new SessionSchedule();
+
+        if (existsSessionSchedule) {
+            existingSessionSchedule = optionalSessionSchedule.get();
+            BeanUtils.copyProperties(convertToEntity(sessionScheduleDTO), existingSessionSchedule, "id");
+        }
+
+        return existsSessionSchedule ? new ResponseEntity<SessionSchedule>(this.sessionScheduleRepository
+                .saveAndFlush(existingSessionSchedule), HttpStatus.ACCEPTED) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @ApiOperation(value = "DELETE A SESSION SCHEDULE")
     @RequestMapping(value = "/session/schedule/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable Long id) {
-        this.sessionScheduleRepository.deleteById(id);
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+        if (Optional.ofNullable(this.sessionScheduleRepository.findById(id).isPresent()).isPresent()) {
+            this.sessionScheduleRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     private SessionSchedule convertToEntity(SessionScheduleDTO sessionScheduleDTO) {
         SessionSchedule sessionSchedule = modelMapper.map(sessionScheduleDTO, SessionSchedule.class);
         return sessionSchedule;
+    }
+
+    private SessionScheduleDTO convertEntityToDTO(SessionSchedule sessionSchedule) {
+        return modelMapper.map(sessionSchedule, SessionScheduleDTO.class);
     }
 }

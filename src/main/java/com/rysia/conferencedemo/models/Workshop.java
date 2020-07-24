@@ -3,6 +3,8 @@ package com.rysia.conferencedemo.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,11 +15,29 @@ public class Workshop {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "workshop_id")
     private Long id;
+
+    @NotEmpty
+    @NotNull
     @Column(name = "workshop_name")
     private String workshopName;
+
+    @NotEmpty
+    @NotNull
+    @Column
     private String description;
+
+    @NotEmpty
+    @NotNull
+    @Column
     private String requirements;
+
+    @NotEmpty
+    @NotNull
+    @Column
     private String room;
+
+    @NotNull
+    @Column
     private Integer capacity;
 
     @ManyToMany

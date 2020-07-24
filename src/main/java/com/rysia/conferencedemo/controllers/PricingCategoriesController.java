@@ -6,9 +6,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -19,36 +22,51 @@ public class PricingCategoriesController {
 
     @ApiOperation(value = "LIST ALL PRICING CATEGORIES")
     @GetMapping("/categories")
-    public List<PricingCategory> list() {
-        return this.pricingCategoryRepository.findAll();
+    public ResponseEntity<List<PricingCategory>> list() {
+        List<PricingCategory> pricingCategories = this.pricingCategoryRepository.findAll();
+
+        return pricingCategories.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<List<PricingCategory>>(pricingCategories, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE PRICING CATEGORY")
     @GetMapping("/category/{id}")
-    public PricingCategory get(@PathVariable Long id) {
-        return this.pricingCategoryRepository.getOne(id);
+    public ResponseEntity<PricingCategory> get(@PathVariable(value = "id") Long id) {
+        Optional<PricingCategory> optionalPricingCategory = this.pricingCategoryRepository.findById(id);
+        return !optionalPricingCategory.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<PricingCategory>(optionalPricingCategory.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE PRICING CATEGORY")
     @PostMapping("/category")
-    @ResponseStatus(HttpStatus.CREATED)
-    public PricingCategory create(@RequestBody final PricingCategory pricingCategory) {
-        return this.pricingCategoryRepository.saveAndFlush(pricingCategory);
-    }
-
-    @ApiOperation(value = "DELETE PRICING CATEGORY")
-    @RequestMapping(value = "/category/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable Long id) {
-        this.pricingCategoryRepository.deleteById(id);
+    public ResponseEntity<PricingCategory> create(@RequestBody @Valid final PricingCategory pricingCategory) {
+        return new ResponseEntity<PricingCategory>(this.pricingCategoryRepository.saveAndFlush(pricingCategory),
+                HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "UPDATE PRICING CATEGORY")
     @RequestMapping(value = "/category/{id}", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.OK)
-    public PricingCategory update(@PathVariable Long id, @RequestBody PricingCategory pricingCategory) {
-        PricingCategory existingPricing = pricingCategoryRepository.getOne(id);
-        BeanUtils.copyProperties(pricingCategory, existingPricing, "id");
-        return this.pricingCategoryRepository.saveAndFlush(existingPricing);
+    public ResponseEntity<PricingCategory> update(@PathVariable(value = "id") Long id, @RequestBody @Valid PricingCategory pricingCategory) {
+        Optional<PricingCategory> optionalPricingCategory = pricingCategoryRepository.findById(id);
+        boolean existsCategory = optionalPricingCategory.isPresent();
+        PricingCategory existingPricing = new PricingCategory();
+
+        if (existsCategory) {
+            existingPricing = optionalPricingCategory.get();
+            BeanUtils.copyProperties(pricingCategory, existingPricing, "id");
+        }
+
+        return existsCategory ? new ResponseEntity<PricingCategory>(this.pricingCategoryRepository
+                .saveAndFlush(existingPricing), HttpStatus.ACCEPTED) : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @ApiOperation(value = "DELETE PRICING CATEGORY")
+    @RequestMapping(value = "/category/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+        if (Optional.ofNullable(this.pricingCategoryRepository.findById(id)).isPresent()) {
+            this.pricingCategoryRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

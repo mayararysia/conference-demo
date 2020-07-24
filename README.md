@@ -40,6 +40,11 @@ Connect with me at [LinkedIn](https://www.linkedin.com/in/rysia/), [Medium](http
         * Comment the data in the `config/PersistenceConfiguration.java` class
 * Open Postman and test the routes on Port 5050. For example `http://localhost:5050/`
 
+## Contributions
+
+* Before starting the contribution process, create a new branch to make your changes.
+* Use any word consistent with the contribution being made.
+
 ## **You can test my RESTful application with these routes:**
    
    * [Swagger Documentation](https://apirest-conference.herokuapp.com/swagger-ui.html)

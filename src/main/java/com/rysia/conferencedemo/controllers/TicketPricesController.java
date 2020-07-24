@@ -8,9 +8,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -22,45 +25,56 @@ public class TicketPricesController {
     @Autowired
     private ModelMapper modelMapper;
 
-    @ApiOperation(value="LIST ALL TICKET PRICES")
+    @ApiOperation(value = "LIST ALL TICKET PRICES")
     @GetMapping("/tickets")
-    public List<TicketPrice> list(){
-        return this.ticketPriceRepository.findAll();
+    public ResponseEntity<List<TicketPrice>> list() {
+        List<TicketPrice> ticketPrices = this.ticketPriceRepository.findAll();
+        return ticketPrices.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<List<TicketPrice>>(ticketPrices, HttpStatus.OK);
     }
 
-    @ApiOperation(value="GET A UNIQUE TICKET PRICE")
+    @ApiOperation(value = "GET A UNIQUE TICKET PRICE")
     @GetMapping("/ticket/{id}")
-    public TicketPrice get(@PathVariable Long id){
-        return this.ticketPriceRepository.getOne(id);
+    public ResponseEntity<TicketPrice> get(@PathVariable(value = "id") Long id) {
+        Optional<TicketPrice> optionalTicketPrice = this.ticketPriceRepository.findById(id);
+        return !optionalTicketPrice.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
+                : new ResponseEntity<TicketPrice>(optionalTicketPrice.get(), HttpStatus.OK);
     }
 
-    @ApiOperation(value="CREATE A TICKET")
+    @ApiOperation(value = "CREATE A TICKET")
     @PostMapping("/ticket")
-    @ResponseStatus(HttpStatus.CREATED)
-    public TicketPrice create(@RequestBody final TicketPriceDTO ticketPriceDTO){
-        TicketPrice ticketPrice = convertToEntity(ticketPriceDTO);
-        return this.ticketPriceRepository.saveAndFlush(ticketPrice);
+    public ResponseEntity<TicketPrice> create(@RequestBody @Valid final TicketPriceDTO ticketPriceDTO) {
+        return new ResponseEntity<TicketPrice>(this.ticketPriceRepository.saveAndFlush(convertToEntity(ticketPriceDTO)),
+                HttpStatus.CREATED);
     }
 
-    @ApiOperation(value="DELETE A TICKET")
-    @RequestMapping(value = "/ticket/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable Long id){
-        this.ticketPriceRepository.deleteById(id);
-    }
-
-    @ApiOperation(value="UPDATE TICKET")
+    @ApiOperation(value = "UPDATE TICKET")
     @RequestMapping(value = "/ticket/{id}", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.OK)
-    public TicketPrice update(@PathVariable Long id, @RequestBody TicketPriceDTO ticketPriceDTO){
-        TicketPrice ticketPrice = convertToEntity(ticketPriceDTO);
-        TicketPrice existingTicketPrice = this.ticketPriceRepository.getOne(id);
-        BeanUtils.copyProperties(ticketPrice, existingTicketPrice, "ticket_price_id");
-        return this.ticketPriceRepository.saveAndFlush(existingTicketPrice);
+    public ResponseEntity<TicketPrice> update(@PathVariable(value = "id") Long id, @RequestBody @Valid TicketPriceDTO ticketPriceDTO) {
+        Optional<TicketPrice> optionalTicketPrice = this.ticketPriceRepository.findById(id);
+        boolean existsTicket = optionalTicketPrice.isPresent();
+        TicketPrice existingTicketPrice = new TicketPrice();
+
+        if (existsTicket) {
+            existingTicketPrice = optionalTicketPrice.get();
+            BeanUtils.copyProperties(convertToEntity(ticketPriceDTO), existingTicketPrice, "ticket_price_id");
+        }
+        return existsTicket ? new ResponseEntity<TicketPrice>(this.ticketPriceRepository.saveAndFlush(existingTicketPrice), HttpStatus.ACCEPTED) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     private TicketPrice convertToEntity(TicketPriceDTO ticketPriceDTO) {
         TicketPrice ticketPrice = modelMapper.map(ticketPriceDTO, TicketPrice.class);
         return ticketPrice;
+    }
+
+    @ApiOperation(value = "DELETE A TICKET")
+    @RequestMapping(value = "/ticket/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+        if (Optional.ofNullable(this.ticketPriceRepository.findById(id)).isPresent()) {
+            this.ticketPriceRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

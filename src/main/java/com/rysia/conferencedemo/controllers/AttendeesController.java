@@ -6,9 +6,13 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1")
@@ -16,38 +20,51 @@ public class AttendeesController {
     @Autowired
     private AttendeeRepository attendeeRepository;
 
-    @ApiOperation(value="LIST ALL ATTENDEES")
+    @ApiOperation(value = "LIST ALL ATTENDEES")
     @GetMapping("/attendees")
-    public List<Attendee> list() {
-        return this.attendeeRepository.findAll();
+    public ResponseEntity<List<Attendee>> list() {
+        List<Attendee> attendees = this.attendeeRepository.findAll();
+        return attendees.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<List<Attendee>>(attendees, HttpStatus.OK);
     }
 
-    @ApiOperation(value="GET A UNIQUE ATTENDEE")
+    @ApiOperation(value = "GET A UNIQUE ATTENDEE")
     @GetMapping("/attendee/{id}")
-    public Attendee get(@PathVariable Long id) {
-        return this.attendeeRepository.getOne(id);
+    public ResponseEntity<Attendee> get(@PathVariable(value = "id") Long id) {
+        Optional<Attendee> optionalAttendee = this.attendeeRepository.findById(id);
+        return !optionalAttendee.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
+                new ResponseEntity<Attendee>(optionalAttendee.get(), HttpStatus.OK);
     }
 
-    @ApiOperation(value="CREATE AN ATTENDEE")
+    @ApiOperation(value = "CREATE AN ATTENDEE")
     @PostMapping("/attendee")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Attendee create(@RequestBody final Attendee attendee) {
-        return this.attendeeRepository.saveAndFlush(attendee);
+    public ResponseEntity<Attendee> create(@RequestBody @Valid final Attendee attendee) {
+        return new ResponseEntity<Attendee>(this.attendeeRepository.saveAndFlush(attendee), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "UPDATE AN ATTENDEE")
     @RequestMapping(value = "/attendee/{id}", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.OK)
-    public Attendee update(@PathVariable Long id, @RequestBody Attendee attendee) {
-        Attendee existingAttendee = this.attendeeRepository.getOne(id);
-        BeanUtils.copyProperties(attendee, existingAttendee, "id");
-        return this.attendeeRepository.saveAndFlush(existingAttendee);
+    public ResponseEntity<Attendee> update(@PathVariable(value = "id") Long id, @RequestBody @Valid Attendee attendee) {
+        Optional<Attendee> optionalAttendee = this.attendeeRepository.findById(id);
+        boolean existsAttendee = optionalAttendee.isPresent();
+        Attendee existingAttendee = new Attendee();
+
+        if (existsAttendee) {
+            existingAttendee = optionalAttendee.get();
+            BeanUtils.copyProperties(attendee, existingAttendee, "id");
+        }
+
+        return existsAttendee ? new ResponseEntity<>(this.attendeeRepository.saveAndFlush(existingAttendee), HttpStatus.ACCEPTED) :
+                new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @ApiOperation(value = "DELETE AN ATTENDEE")
     @RequestMapping(value = "/attendee/{id}", method = RequestMethod.DELETE)
-    @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable Long id) {
-        this.attendeeRepository.deleteById(id);
+    public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
+        if (Optional.ofNullable(this.attendeeRepository.findById(id)).isPresent()) {
+            this.attendeeRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
