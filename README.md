@@ -18,7 +18,7 @@ This project is part of my studies portfolio, so, feel free to contribute.
 
 Email-me: mayara.ryzia@gmail.com | mral1@ifal.edu.br
 
-Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](https://www.linkedin.com/in/rysia/).
+Connect with me at [LinkedIn](https://www.linkedin.com/in/rysia/), [Medium](https://medium.com/@mayararysia) and [Dev.to](https://dev.to/mayararysia).
 
 ## Requirements
 
@@ -83,4 +83,4 @@ Connect with me at [Medium](https://medium.com/@mayararysia) and [LinkedIn](http
 
 *ENTITY RELATIONSHIP DIAGRAM*
 
-![container](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/er-diagram.png)
+![ER-model](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/er-diagram.png)
