@@ -1,6 +1,7 @@
 package com.rysia.conferencedemo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Entity(name = "workshops")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Workshop {
+public class Workshop extends RepresentationModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "workshop_id")

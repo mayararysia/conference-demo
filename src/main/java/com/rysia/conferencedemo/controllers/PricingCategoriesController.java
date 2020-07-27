@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/pricing")
@@ -25,16 +27,30 @@ public class PricingCategoriesController {
     public ResponseEntity<List<PricingCategory>> list() {
         List<PricingCategory> pricingCategories = this.pricingCategoryRepository.findAll();
 
-        return pricingCategories.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<List<PricingCategory>>(pricingCategories, HttpStatus.OK);
+        if (pricingCategories.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        pricingCategories.stream().forEach(category ->
+                category.add(linkTo(methodOn(PricingCategoriesController.class)
+                        .get(category.getId()))
+                        .withSelfRel()));
+
+        return new ResponseEntity<List<PricingCategory>>(pricingCategories, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE PRICING CATEGORY")
     @GetMapping("/category/{id}")
     public ResponseEntity<PricingCategory> get(@PathVariable(value = "id") Long id) {
         Optional<PricingCategory> optionalPricingCategory = this.pricingCategoryRepository.findById(id);
-        return !optionalPricingCategory.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<PricingCategory>(optionalPricingCategory.get(), HttpStatus.OK);
+
+        if (!optionalPricingCategory.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        optionalPricingCategory.get().add(linkTo(methodOn(PricingCategoriesController.class)
+                .list())
+                .withRel("List of Categories"));
+
+        return new ResponseEntity<PricingCategory>(optionalPricingCategory.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE PRICING CATEGORY")

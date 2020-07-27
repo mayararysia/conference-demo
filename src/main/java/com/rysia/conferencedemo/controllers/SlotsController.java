@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1")
@@ -24,16 +26,29 @@ public class SlotsController {
     @GetMapping("/slots")
     public ResponseEntity<List<Slot>> list() {
         List<Slot> slots = this.slotRepository.findAll();
-        return slots.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<List<Slot>>(slots, HttpStatus.OK);
+        if (slots.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        slots.stream().forEach(slot -> slot.add(linkTo(methodOn(SlotsController.class)
+                .get(slot.getId()))
+                .withSelfRel()));
+
+        return new ResponseEntity<List<Slot>>(slots, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE TIME SLOT")
     @GetMapping("/slot/{id}")
     public ResponseEntity<Slot> get(@PathVariable(value = "id") Long id) {
         Optional<Slot> optionalSlot = this.slotRepository.findById(id);
-        return !optionalSlot.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<Slot>(optionalSlot.get(), HttpStatus.OK);
+
+        if (!optionalSlot.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        optionalSlot.get().add(linkTo(methodOn(SlotsController.class)
+                .list())
+                .withRel("List of Slots"));
+
+        return new ResponseEntity<Slot>(optionalSlot.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE A TIME SLOT")

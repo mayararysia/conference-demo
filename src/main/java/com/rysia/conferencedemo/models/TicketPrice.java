@@ -2,6 +2,7 @@ package com.rysia.conferencedemo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Entity(name = "ticketPrices")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class TicketPrice {
+public class TicketPrice extends RepresentationModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ticket_price_id")

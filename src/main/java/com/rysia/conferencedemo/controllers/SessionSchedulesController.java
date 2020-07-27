@@ -15,6 +15,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1")
@@ -30,16 +32,30 @@ public class SessionSchedulesController {
     @GetMapping("/sessions/schedules")
     public ResponseEntity<List<SessionSchedule>> list() {
         List<SessionSchedule> sessionSchedules = this.sessionScheduleRepository.findAll();
-        return sessionSchedules.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<List<SessionSchedule>>(sessionSchedules, HttpStatus.OK);
+        if (sessionSchedules.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        sessionSchedules.stream().forEach(sessionSchedule ->
+                sessionSchedule.add(linkTo(methodOn(SessionSchedulesController.class)
+                        .get(sessionSchedule.getId()))
+                        .withSelfRel()));
+
+        return new ResponseEntity<List<SessionSchedule>>(sessionSchedules, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE SESSION SCHEDULE")
     @GetMapping("/session/schedule/{id}")
     public ResponseEntity<SessionSchedule> get(@PathVariable(value = "id") Long id) {
         Optional<SessionSchedule> optionalSessionSchedule = this.sessionScheduleRepository.findById(id);
-        return !optionalSessionSchedule.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<SessionSchedule>(optionalSessionSchedule.get(), HttpStatus.OK);
+
+        if (!optionalSessionSchedule.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        optionalSessionSchedule.get().add(linkTo(methodOn(SessionSchedulesController.class)
+                .list())
+                .withRel("List of Session Schedules"));
+
+        return new ResponseEntity<SessionSchedule>(optionalSessionSchedule.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE A SESSION SCHEDULE")

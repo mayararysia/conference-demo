@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
@@ -29,16 +31,30 @@ public class WorkshopsController {
     @GetMapping("/workshops")
     public ResponseEntity<List<Workshop>> list() {
         List<Workshop> workshops = this.workshopRepository.findAll();
-        return workshops.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<List<Workshop>>(workshops, HttpStatus.OK);
+
+        if (workshops.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        workshops.stream().forEach(workshop -> workshop.add(linkTo(methodOn(WorkshopsController.class)
+                .get(workshop.getId()))
+                .withSelfRel()));
+
+        return new ResponseEntity<List<Workshop>>(workshops, HttpStatus.OK);
     }
 
     @ApiOperation(value = " GET A UNIQUE WORKSHOP")
     @GetMapping("/workshop/{id}")
     public ResponseEntity<Workshop> get(@PathVariable(value = "id") Long id) {
         Optional<Workshop> optionalWorkshop = this.workshopRepository.findById(id);
-        return !optionalWorkshop.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<Workshop>(optionalWorkshop.get(), HttpStatus.OK);
+
+        if (!optionalWorkshop.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        optionalWorkshop.get().add(linkTo(methodOn(WorkshopsController.class)
+                .list())
+                .withRel("List of Workshops"));
+
+        return new ResponseEntity<Workshop>(optionalWorkshop.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE A WORKSHOP")

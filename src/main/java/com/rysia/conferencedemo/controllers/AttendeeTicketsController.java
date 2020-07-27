@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1")
@@ -25,16 +27,30 @@ public class AttendeeTicketsController {
     public ResponseEntity<List<AttendeeTicket>> list() {
         List<AttendeeTicket> attendeeTickets = this.attendeeTicketRepository.findAll();
 
-        return attendeeTickets.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<List<AttendeeTicket>>(attendeeTickets, HttpStatus.OK);
+        if (attendeeTickets.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        attendeeTickets.stream().forEach(attendeeTicket ->
+                attendeeTicket.add(linkTo(methodOn(AttendeeTicketsController.class)
+                        .get(attendeeTicket.getId()))
+                        .withSelfRel()));
+
+        return new ResponseEntity<List<AttendeeTicket>>(attendeeTickets, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE ATTENDEE TICKET")
     @GetMapping("/attendee/ticket/{id}")
     public ResponseEntity<AttendeeTicket> get(@PathVariable(value = "id") Long id) {
         Optional<AttendeeTicket> optionalAttendeeTicket = this.attendeeTicketRepository.findById(id);
-        return !optionalAttendeeTicket.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<AttendeeTicket>(optionalAttendeeTicket.get(), HttpStatus.OK);
+
+        if (!optionalAttendeeTicket.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        optionalAttendeeTicket.get().add(linkTo(methodOn(AttendeeTicketsController.class)
+                .list())
+                .withRel("List of Attendee Tickets"));
+
+        return new ResponseEntity<AttendeeTicket>(optionalAttendeeTicket.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE AN ATTENDEE TICKET")

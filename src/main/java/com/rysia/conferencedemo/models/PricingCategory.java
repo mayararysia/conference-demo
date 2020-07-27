@@ -2,6 +2,8 @@ package com.rysia.conferencedemo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.hateoas.RepresentationModel;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -9,7 +11,7 @@ import java.util.List;
 
 @Entity(name = "pricingCategories")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class PricingCategory{
+public class PricingCategory extends RepresentationModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

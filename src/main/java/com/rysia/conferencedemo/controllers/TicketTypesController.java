@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1/ticket")
@@ -24,16 +26,28 @@ public class TicketTypesController {
     @GetMapping("/types")
     public ResponseEntity<List<TicketType>> list() {
         List<TicketType> ticketTypes = this.ticketTypeRepository.findAll();
-        return ticketTypes.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<List<TicketType>>(ticketTypes, HttpStatus.OK);
+
+        if (ticketTypes.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        ticketTypes.stream().forEach(ticketType -> ticketType.add(linkTo(methodOn(TicketTypesController.class)
+                .get(ticketType.getId()))
+                .withSelfRel()));
+        return new ResponseEntity<List<TicketType>>(ticketTypes, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE TICKET TYPE")
     @GetMapping("/type/{id}")
     public ResponseEntity<TicketType> get(@PathVariable(value = "id") Long id) {
         Optional<TicketType> optionalTicketType = this.ticketTypeRepository.findById(id);
-        return !optionalTicketType.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                : new ResponseEntity<TicketType>(optionalTicketType.get(), HttpStatus.OK);
+
+        if (!optionalTicketType.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        optionalTicketType.get().add(linkTo(methodOn(TicketTypesController.class)
+                .list())
+                .withRel("List of Ticket Types"));
+        return new ResponseEntity<TicketType>(optionalTicketType.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE A TICKET TYPE")

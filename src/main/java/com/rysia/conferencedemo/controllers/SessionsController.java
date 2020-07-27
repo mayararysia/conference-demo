@@ -15,6 +15,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1")
@@ -30,8 +32,14 @@ public class SessionsController {
     @ResponseBody
     public ResponseEntity<List<Session>> list() {
         List<Session> sessions = this.sessionRepository.findAll();
-        return sessions.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<List<Session>>(sessions, HttpStatus.OK);
+        if (sessions.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        sessions.stream().forEach(session -> session.add(linkTo(methodOn(SessionsController.class)
+                .get(session.getSessionId()))
+                .withSelfRel()));
+
+        return new ResponseEntity<List<Session>>(sessions, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE SESSION")
@@ -39,8 +47,15 @@ public class SessionsController {
     @ResponseBody
     public ResponseEntity<Session> get(@PathVariable(value = "id") Long id) {
         Optional<Session> optionalSession = this.sessionRepository.findById(id);
-        return !optionalSession.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<Session>(optionalSession.get(), HttpStatus.OK);
+
+        if (!optionalSession.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        optionalSession.get().add(linkTo(methodOn(SessionsController.class)
+                .list())
+                .withRel("List of Sessions"));
+
+        return new ResponseEntity<Session>(optionalSession.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE A SESSION")

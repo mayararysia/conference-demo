@@ -1,12 +1,13 @@
 package com.rysia.conferencedemo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 
 @Entity(name = "sessionSchedule")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class SessionSchedule {
+public class SessionSchedule extends RepresentationModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "schedule_id")

@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1/discount")
@@ -26,16 +28,29 @@ public class DiscountCodesController {
     public ResponseEntity<List<DiscountCode>> list() {
         List<DiscountCode> discountCodes = this.discountCodeRepository.findAll();
 
-        return discountCodes.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<List<DiscountCode>>(discountCodes, HttpStatus.OK);
+        if (discountCodes.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        discountCodes.stream().forEach(discount -> discount.add(linkTo(methodOn(DiscountCodesController.class)
+                .get(discount.getId()))
+                .withSelfRel()));
+
+        return new ResponseEntity<List<DiscountCode>>(discountCodes, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE DISCOUNT CODE")
     @GetMapping("/code/{id}")
     public ResponseEntity<DiscountCode> get(@PathVariable(value = "id") Long id) {
         Optional<DiscountCode> optionalDiscountCode = this.discountCodeRepository.findById(id);
-        return !optionalDiscountCode.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<DiscountCode>(optionalDiscountCode.get(), HttpStatus.OK);
+
+        if (!optionalDiscountCode.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        optionalDiscountCode.get().add(linkTo(methodOn(DiscountCodesController.class)
+                .list())
+                .withRel("List of Discounts"));
+
+        return new ResponseEntity<DiscountCode>(optionalDiscountCode.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE A DISCOUNT CODE")
@@ -64,7 +79,7 @@ public class DiscountCodesController {
     @ApiOperation(value = "DELETE A DISCOUNT CODE")
     @RequestMapping(value = "/code/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
-        if(Optional.ofNullable(this.discountCodeRepository.findById(id)).isPresent()){
+        if (Optional.ofNullable(this.discountCodeRepository.findById(id)).isPresent()) {
             this.discountCodeRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.OK);
         }

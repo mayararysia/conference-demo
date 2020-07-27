@@ -15,6 +15,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1")
@@ -29,16 +31,30 @@ public class TagsController {
     @GetMapping("/tags")
     public ResponseEntity<List<Tag>> list() {
         List<Tag> tags = this.tagRepository.findAll();
-        return tags.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<List<Tag>>(tags, HttpStatus.OK);
+
+        if (tags.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        tags.stream().forEach(tag -> tag.add(linkTo(methodOn(WorkshopsController.class)
+                .get(tag.getId()))
+                .withSelfRel()));
+
+        return new ResponseEntity<List<Tag>>(tags, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE TAG")
     @GetMapping("/tag/{id}")
     public ResponseEntity<Tag> get(@PathVariable(value = "id") Long id) {
         Optional<Tag> optionalTag = this.tagRepository.findById(id);
-        return !optionalTag.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<Tag>(optionalTag.get(), HttpStatus.OK);
+
+        if (!optionalTag.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        optionalTag.get().add(linkTo(methodOn(TagsController.class)
+                .list())
+                .withRel("List of Tags"));
+
+        return new ResponseEntity<Tag>(optionalTag.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE A TAG")

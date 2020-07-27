@@ -15,6 +15,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1")
@@ -29,16 +31,30 @@ public class TicketPricesController {
     @GetMapping("/tickets")
     public ResponseEntity<List<TicketPrice>> list() {
         List<TicketPrice> ticketPrices = this.ticketPriceRepository.findAll();
-        return ticketPrices.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<List<TicketPrice>>(ticketPrices, HttpStatus.OK);
+
+        if (ticketPrices.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        ticketPrices.stream().forEach(ticketPrice -> ticketPrice.add(linkTo(methodOn(TicketPricesController.class)
+                .get(ticketPrice.getTicketPriceId()))
+                .withSelfRel()));
+
+        return new ResponseEntity<List<TicketPrice>>(ticketPrices, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE TICKET PRICE")
     @GetMapping("/ticket/{id}")
     public ResponseEntity<TicketPrice> get(@PathVariable(value = "id") Long id) {
         Optional<TicketPrice> optionalTicketPrice = this.ticketPriceRepository.findById(id);
-        return !optionalTicketPrice.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND)
-                : new ResponseEntity<TicketPrice>(optionalTicketPrice.get(), HttpStatus.OK);
+
+        if (!optionalTicketPrice.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        optionalTicketPrice.get().add(linkTo(methodOn(TicketPricesController.class)
+                .list())
+                .withRel("List of Ticket Prices"));
+
+        return new ResponseEntity<TicketPrice>(optionalTicketPrice.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE A TICKET")

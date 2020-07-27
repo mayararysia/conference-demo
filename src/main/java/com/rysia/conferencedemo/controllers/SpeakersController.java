@@ -13,6 +13,8 @@ import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("api/v1")
@@ -24,16 +26,29 @@ public class SpeakersController {
     @GetMapping("/speakers")
     public ResponseEntity<List<Speaker>> list() {
         List<Speaker> speakers = this.speakerRepository.findAll();
-        return speakers.isEmpty() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<List<Speaker>>(speakers, HttpStatus.OK);
+        if (speakers.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        speakers.stream().forEach(speaker -> speaker.add(linkTo(methodOn(SpeakersController.class)
+                .get(speaker.getSpeakerId()))
+                .withSelfRel()));
+
+        return new ResponseEntity<List<Speaker>>(speakers, HttpStatus.OK);
     }
 
     @ApiOperation(value = "GET A UNIQUE SPEAKER")
     @GetMapping("/speaker/{id}")
     public ResponseEntity<Speaker> get(@PathVariable(value = "id") Long id) {
         Optional<Speaker> optionalSpeaker = this.speakerRepository.findById(id);
-        return !optionalSpeaker.isPresent() ? new ResponseEntity<>(HttpStatus.NOT_FOUND) :
-                new ResponseEntity<Speaker>(optionalSpeaker.get(), HttpStatus.OK);
+
+        if (!optionalSpeaker.isPresent())
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        optionalSpeaker.get().add(linkTo(methodOn(SpeakersController.class)
+                .list())
+                .withRel("List of Speakers"));
+
+        return new ResponseEntity<Speaker>(optionalSpeaker.get(), HttpStatus.OK);
     }
 
     @ApiOperation(value = "CREATE A SPEAKER")
