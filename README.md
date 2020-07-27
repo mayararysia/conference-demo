@@ -78,7 +78,7 @@ Connect with me at [LinkedIn](https://www.linkedin.com/in/rysia/), [Medium](http
 *CLOUD DEPLOYMENT*
 
 
-![heroku](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/heroku.png)
+![heroku](https://raw.githubusercontent.com/mayararysia/conference-demo/master/screenshots/herokuv2.png)
 
 *WAR DEPLOYMENT*
 
