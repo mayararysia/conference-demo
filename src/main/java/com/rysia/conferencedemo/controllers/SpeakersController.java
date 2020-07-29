@@ -3,6 +3,8 @@ package com.rysia.conferencedemo.controllers;
 import com.rysia.conferencedemo.models.Speaker;
 import com.rysia.conferencedemo.repositories.SpeakerRepository;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ public class SpeakersController {
     private SpeakerRepository speakerRepository;
 
     @ApiOperation(value = "LIST ALL SPEAKERS")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Speakers Not Found")})
     @GetMapping("/speakers")
     public ResponseEntity<List<Speaker>> list() {
         List<Speaker> speakers = this.speakerRepository.findAll();
@@ -37,6 +40,7 @@ public class SpeakersController {
     }
 
     @ApiOperation(value = "GET A UNIQUE SPEAKER")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Speaker Not Found")})
     @GetMapping("/speaker/{id}")
     public ResponseEntity<Speaker> get(@PathVariable(value = "id") Long id) {
         Optional<Speaker> optionalSpeaker = this.speakerRepository.findById(id);
@@ -52,12 +56,17 @@ public class SpeakersController {
     }
 
     @ApiOperation(value = "CREATE A SPEAKER")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Speaker Created")})
     @PostMapping("/speaker")
     public ResponseEntity<Speaker> create(@RequestBody @Valid final Speaker speaker) {
         return new ResponseEntity<Speaker>(this.speakerRepository.saveAndFlush(speaker), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "UPDATE A SPEAKER")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Updated Speaker"),
+            @ApiResponse(code = 404, message = "Speaker Not Found")
+    })
     @RequestMapping(value = "/speaker/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Speaker> update(@PathVariable(value = "id") Long id, @RequestBody @Valid Speaker speaker) {
         Optional<Speaker> optionalSpeaker = this.speakerRepository.findById(id);
@@ -74,6 +83,10 @@ public class SpeakersController {
     }
 
     @ApiOperation(value = "DELETE A SPEAKER")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Deleted Speaker"),
+            @ApiResponse(code = 404, message = "Speaker Not Found")
+    })
     @RequestMapping(value = "/speaker/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         if (Optional.ofNullable(this.speakerRepository.findById(id)).isPresent()) {

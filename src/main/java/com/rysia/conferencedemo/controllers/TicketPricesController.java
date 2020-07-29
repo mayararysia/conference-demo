@@ -4,6 +4,8 @@ import com.rysia.conferencedemo.dto.TicketPriceDTO;
 import com.rysia.conferencedemo.models.TicketPrice;
 import com.rysia.conferencedemo.repositories.TicketPriceRepository;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ public class TicketPricesController {
     private ModelMapper modelMapper;
 
     @ApiOperation(value = "LIST ALL TICKET PRICES")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Tickets Not Found")})
     @GetMapping("/tickets")
     public ResponseEntity<List<TicketPrice>> list() {
         List<TicketPrice> ticketPrices = this.ticketPriceRepository.findAll();
@@ -43,6 +46,7 @@ public class TicketPricesController {
     }
 
     @ApiOperation(value = "GET A UNIQUE TICKET PRICE")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Ticket Not Found")})
     @GetMapping("/ticket/{id}")
     public ResponseEntity<TicketPrice> get(@PathVariable(value = "id") Long id) {
         Optional<TicketPrice> optionalTicketPrice = this.ticketPriceRepository.findById(id);
@@ -58,6 +62,7 @@ public class TicketPricesController {
     }
 
     @ApiOperation(value = "CREATE A TICKET")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Ticket Created")})
     @PostMapping("/ticket")
     public ResponseEntity<TicketPrice> create(@RequestBody @Valid final TicketPriceDTO ticketPriceDTO) {
         return new ResponseEntity<TicketPrice>(this.ticketPriceRepository.saveAndFlush(convertToEntity(ticketPriceDTO)),
@@ -65,6 +70,10 @@ public class TicketPricesController {
     }
 
     @ApiOperation(value = "UPDATE TICKET")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Updated Ticket"),
+            @ApiResponse(code = 404, message = "Ticket Not Found")
+    })
     @RequestMapping(value = "/ticket/{id}", method = RequestMethod.PUT)
     public ResponseEntity<TicketPrice> update(@PathVariable(value = "id") Long id, @RequestBody @Valid TicketPriceDTO ticketPriceDTO) {
         Optional<TicketPrice> optionalTicketPrice = this.ticketPriceRepository.findById(id);
@@ -79,12 +88,11 @@ public class TicketPricesController {
                 new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    private TicketPrice convertToEntity(TicketPriceDTO ticketPriceDTO) {
-        TicketPrice ticketPrice = modelMapper.map(ticketPriceDTO, TicketPrice.class);
-        return ticketPrice;
-    }
-
     @ApiOperation(value = "DELETE A TICKET")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Deleted Ticket"),
+            @ApiResponse(code = 404, message = "Ticket Not Found")
+    })
     @RequestMapping(value = "/ticket/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         if (Optional.ofNullable(this.ticketPriceRepository.findById(id)).isPresent()) {
@@ -92,5 +100,10 @@ public class TicketPricesController {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    private TicketPrice convertToEntity(TicketPriceDTO ticketPriceDTO) {
+        TicketPrice ticketPrice = modelMapper.map(ticketPriceDTO, TicketPrice.class);
+        return ticketPrice;
     }
 }

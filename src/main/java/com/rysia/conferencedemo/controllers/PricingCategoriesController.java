@@ -3,6 +3,8 @@ package com.rysia.conferencedemo.controllers;
 import com.rysia.conferencedemo.models.PricingCategory;
 import com.rysia.conferencedemo.repositories.PricingCategoryRepository;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ public class PricingCategoriesController {
     private PricingCategoryRepository pricingCategoryRepository;
 
     @ApiOperation(value = "LIST ALL PRICING CATEGORIES")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Categories Not Found")})
     @GetMapping("/categories")
     public ResponseEntity<List<PricingCategory>> list() {
         List<PricingCategory> pricingCategories = this.pricingCategoryRepository.findAll();
@@ -39,6 +42,7 @@ public class PricingCategoriesController {
     }
 
     @ApiOperation(value = "GET A UNIQUE PRICING CATEGORY")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Category Not Found")})
     @GetMapping("/category/{id}")
     public ResponseEntity<PricingCategory> get(@PathVariable(value = "id") Long id) {
         Optional<PricingCategory> optionalPricingCategory = this.pricingCategoryRepository.findById(id);
@@ -54,6 +58,7 @@ public class PricingCategoriesController {
     }
 
     @ApiOperation(value = "CREATE PRICING CATEGORY")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Pricing Category Created")})
     @PostMapping("/category")
     public ResponseEntity<PricingCategory> create(@RequestBody @Valid final PricingCategory pricingCategory) {
         return new ResponseEntity<PricingCategory>(this.pricingCategoryRepository.saveAndFlush(pricingCategory),
@@ -61,6 +66,10 @@ public class PricingCategoriesController {
     }
 
     @ApiOperation(value = "UPDATE PRICING CATEGORY")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Updated Category"),
+            @ApiResponse(code = 404, message = "Category Not Found")
+    })
     @RequestMapping(value = "/category/{id}", method = RequestMethod.PUT)
     public ResponseEntity<PricingCategory> update(@PathVariable(value = "id") Long id, @RequestBody @Valid PricingCategory pricingCategory) {
         Optional<PricingCategory> optionalPricingCategory = pricingCategoryRepository.findById(id);
@@ -77,6 +86,10 @@ public class PricingCategoriesController {
     }
 
     @ApiOperation(value = "DELETE PRICING CATEGORY")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Deleted Pricing Category"),
+            @ApiResponse(code = 404, message = "Pricing Category Not Found")
+    })
     @RequestMapping(value = "/category/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         if (Optional.ofNullable(this.pricingCategoryRepository.findById(id)).isPresent()) {

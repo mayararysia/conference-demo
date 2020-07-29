@@ -3,6 +3,8 @@ package com.rysia.conferencedemo.controllers;
 import com.rysia.conferencedemo.models.Slot;
 import com.rysia.conferencedemo.repositories.SlotRepository;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ public class SlotsController {
     private SlotRepository slotRepository;
 
     @ApiOperation(value = "LIST ALL TIME SLOTS")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Slots Not Found")})
     @GetMapping("/slots")
     public ResponseEntity<List<Slot>> list() {
         List<Slot> slots = this.slotRepository.findAll();
@@ -37,6 +40,7 @@ public class SlotsController {
     }
 
     @ApiOperation(value = "GET A UNIQUE TIME SLOT")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Slot Not Found")})
     @GetMapping("/slot/{id}")
     public ResponseEntity<Slot> get(@PathVariable(value = "id") Long id) {
         Optional<Slot> optionalSlot = this.slotRepository.findById(id);
@@ -52,12 +56,17 @@ public class SlotsController {
     }
 
     @ApiOperation(value = "CREATE A TIME SLOT")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Slot Created")})
     @PostMapping("/slot")
     public ResponseEntity<Slot> create(@RequestBody @Valid final Slot slot) {
         return new ResponseEntity<Slot>(this.slotRepository.saveAndFlush(slot), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "UPDATE A TIME SLOT")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Updated Slot"),
+            @ApiResponse(code = 404, message = "Slot Not Found")
+    })
     @RequestMapping(value = "/slot/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Slot> update(@PathVariable(value = "id") Long id, @RequestBody @Valid Slot slot) {
         Optional<Slot> optionalSlot = this.slotRepository.findById(id);
@@ -74,6 +83,10 @@ public class SlotsController {
     }
 
     @ApiOperation(value = "DELETE A TIME SLOT")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Deleted Time Slot"),
+            @ApiResponse(code = 404, message = "Time Slot Not Found")
+    })
     @RequestMapping(value = "/slot/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         if (Optional.ofNullable(this.slotRepository.findById(id)).isPresent()) {

@@ -4,6 +4,8 @@ import com.rysia.conferencedemo.dto.SessionDTO;
 import com.rysia.conferencedemo.models.Session;
 import com.rysia.conferencedemo.repositories.SessionRepository;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ public class SessionsController {
     private ModelMapper modelMapper;
 
     @ApiOperation(value = "LIST ALL SESSIONS")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Sessions Not Found")})
     @GetMapping("/sessions")
     @ResponseBody
     public ResponseEntity<List<Session>> list() {
@@ -43,6 +46,7 @@ public class SessionsController {
     }
 
     @ApiOperation(value = "GET A UNIQUE SESSION")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Session Not Found")})
     @GetMapping("/session/{id}")
     @ResponseBody
     public ResponseEntity<Session> get(@PathVariable(value = "id") Long id) {
@@ -59,6 +63,7 @@ public class SessionsController {
     }
 
     @ApiOperation(value = "CREATE A SESSION")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Session Created")})
     @PostMapping("/session")
     public ResponseEntity<Session> create(@RequestBody @Valid final SessionDTO sessionDTO) {
         return new ResponseEntity<Session>(this.sessionRepository.saveAndFlush(convertToEntity(sessionDTO)),
@@ -66,6 +71,10 @@ public class SessionsController {
     }
 
     @ApiOperation(value = "UPDATE A SESSION")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Updated Session"),
+            @ApiResponse(code = 404, message = "Session Not Found")
+    })
     @RequestMapping(value = "/session/{id}", method = RequestMethod.PUT, produces = "application/json", consumes = "application/json")
     public ResponseEntity<Session> update(@PathVariable(value = "id") Long id, @RequestBody @Valid SessionDTO sessionDTO) {
         Optional<Session> optionalSession = this.sessionRepository.findById(id);
@@ -80,6 +89,10 @@ public class SessionsController {
     }
 
     @ApiOperation(value = "DELETE A SESSION")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Deleted Session"),
+            @ApiResponse(code = 404, message = "Session Not Found")
+    })
     @RequestMapping(value = "/session/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         if (Optional.ofNullable(this.sessionRepository.findById(id)).isPresent()) {

@@ -3,6 +3,8 @@ package com.rysia.conferencedemo.controllers;
 import com.rysia.conferencedemo.models.Attendee;
 import com.rysia.conferencedemo.repositories.AttendeeRepository;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ public class AttendeesController {
     private AttendeeRepository attendeeRepository;
 
     @ApiOperation(value = "LIST ALL ATTENDEES")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Attendee Not Found")})
     @GetMapping("/attendees")
     public ResponseEntity<List<Attendee>> list() {
         List<Attendee> attendees = this.attendeeRepository.findAll();
@@ -37,6 +40,7 @@ public class AttendeesController {
     }
 
     @ApiOperation(value = "GET A UNIQUE ATTENDEE")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Attendee Not Found")})
     @GetMapping("/attendee/{id}")
     public ResponseEntity<Attendee> get(@PathVariable(value = "id") Long id) {
         Optional<Attendee> optionalAttendee = this.attendeeRepository.findById(id);
@@ -51,12 +55,17 @@ public class AttendeesController {
     }
 
     @ApiOperation(value = "CREATE AN ATTENDEE")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Attendee Created")})
     @PostMapping("/attendee")
     public ResponseEntity<Attendee> create(@RequestBody @Valid final Attendee attendee) {
         return new ResponseEntity<Attendee>(this.attendeeRepository.saveAndFlush(attendee), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "UPDATE AN ATTENDEE")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Updated Attendee"),
+            @ApiResponse(code = 404, message = "Attendee Not Found")
+    })
     @RequestMapping(value = "/attendee/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Attendee> update(@PathVariable(value = "id") Long id, @RequestBody @Valid Attendee attendee) {
         Optional<Attendee> optionalAttendee = this.attendeeRepository.findById(id);
@@ -73,6 +82,7 @@ public class AttendeesController {
     }
 
     @ApiOperation(value = "DELETE AN ATTENDEE")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Deleted Attendee"), @ApiResponse(code = 404, message = "Attendee Not Found")})
     @RequestMapping(value = "/attendee/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         if (Optional.ofNullable(this.attendeeRepository.findById(id)).isPresent()) {

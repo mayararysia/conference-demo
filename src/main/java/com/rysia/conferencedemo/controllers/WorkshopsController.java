@@ -4,6 +4,8 @@ import com.rysia.conferencedemo.dto.WorkshopDTO;
 import com.rysia.conferencedemo.models.Workshop;
 import com.rysia.conferencedemo.repositories.WorkshopRepository;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ public class WorkshopsController {
     private ModelMapper modelMapper;
 
     @ApiOperation(value = "LIST ALL WORKSHOPS")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Workshops Not Found")})
     @GetMapping("/workshops")
     public ResponseEntity<List<Workshop>> list() {
         List<Workshop> workshops = this.workshopRepository.findAll();
@@ -43,6 +46,7 @@ public class WorkshopsController {
     }
 
     @ApiOperation(value = " GET A UNIQUE WORKSHOP")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Worshop Not Found")})
     @GetMapping("/workshop/{id}")
     public ResponseEntity<Workshop> get(@PathVariable(value = "id") Long id) {
         Optional<Workshop> optionalWorkshop = this.workshopRepository.findById(id);
@@ -58,12 +62,17 @@ public class WorkshopsController {
     }
 
     @ApiOperation(value = "CREATE A WORKSHOP")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Workshop Created")})
     @PostMapping("/workshop")
     public ResponseEntity<WorkshopDTO> create(@RequestBody @Valid final Workshop workshop) {
         return new ResponseEntity<WorkshopDTO>(convertEntityToDTO(this.workshopRepository.saveAndFlush(workshop)), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "UPDATE A WORKSHOP")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Updated Workshop"),
+            @ApiResponse(code = 404, message = "Workshop Not Found")
+    })
     @RequestMapping(value = "/workshop/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Workshop> update(@PathVariable(value = "id") Long id, @RequestBody @Valid final Workshop workshop) {
         Optional<Workshop> optionalWorkshop = this.workshopRepository.findById(id);
@@ -79,6 +88,10 @@ public class WorkshopsController {
     }
 
     @ApiOperation(value = "DELETE A WORKSHOP")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Deleted Workshop"),
+            @ApiResponse(code = 404, message = "Workshop Type Not Found")
+    })
     @RequestMapping(value = "/workshop/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         if (Optional.ofNullable(this.workshopRepository.findById(id)).isPresent()) {
@@ -87,7 +100,6 @@ public class WorkshopsController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
-
 
     private WorkshopDTO convertEntityToDTO(Workshop workshop) {
         return modelMapper.map(workshop, WorkshopDTO.class);

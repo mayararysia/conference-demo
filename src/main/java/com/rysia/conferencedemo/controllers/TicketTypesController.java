@@ -3,6 +3,8 @@ package com.rysia.conferencedemo.controllers;
 import com.rysia.conferencedemo.models.TicketType;
 import com.rysia.conferencedemo.repositories.TicketTypeRepository;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +25,7 @@ public class TicketTypesController {
     private TicketTypeRepository ticketTypeRepository;
 
     @ApiOperation(value = "LIST ALL TICKET TYPES")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Types Not Found")})
     @GetMapping("/types")
     public ResponseEntity<List<TicketType>> list() {
         List<TicketType> ticketTypes = this.ticketTypeRepository.findAll();
@@ -37,6 +40,7 @@ public class TicketTypesController {
     }
 
     @ApiOperation(value = "GET A UNIQUE TICKET TYPE")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Type Not Found")})
     @GetMapping("/type/{id}")
     public ResponseEntity<TicketType> get(@PathVariable(value = "id") Long id) {
         Optional<TicketType> optionalTicketType = this.ticketTypeRepository.findById(id);
@@ -51,12 +55,17 @@ public class TicketTypesController {
     }
 
     @ApiOperation(value = "CREATE A TICKET TYPE")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Type Created")})
     @PostMapping("/type")
     public ResponseEntity<TicketType> create(@RequestBody @Valid final TicketType ticketType) {
         return new ResponseEntity<TicketType>(this.ticketTypeRepository.saveAndFlush(ticketType), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "UPDATE A TICKET TYPE")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Updated Ticket Type"),
+            @ApiResponse(code = 404, message = "Ticket Type Not Found")
+    })
     @RequestMapping(value = "/type/{id}", method = RequestMethod.PUT)
     public ResponseEntity<TicketType> update(@PathVariable(value = "id") Long id, @RequestBody @Valid TicketType ticketType) {
         Optional<TicketType> optionalTicketType = this.ticketTypeRepository.findById(id);
@@ -73,6 +82,10 @@ public class TicketTypesController {
     }
 
     @ApiOperation(value = "DELETE A TICKET TYPE")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Deleted Ticket Type"),
+            @ApiResponse(code = 404, message = "Ticket Type Not Found")
+    })
     @RequestMapping(value = "/type/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         if (Optional.ofNullable(this.ticketTypeRepository.findById(id)).isPresent()) {

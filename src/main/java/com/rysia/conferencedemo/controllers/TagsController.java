@@ -4,6 +4,8 @@ import com.rysia.conferencedemo.dto.TagDTO;
 import com.rysia.conferencedemo.models.Tag;
 import com.rysia.conferencedemo.repositories.TagRepository;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,7 @@ public class TagsController {
     private ModelMapper modelMapper;
 
     @ApiOperation(value = "LIST ALL TAGS")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Tags Not Found")})
     @GetMapping("/tags")
     public ResponseEntity<List<Tag>> list() {
         List<Tag> tags = this.tagRepository.findAll();
@@ -43,6 +46,7 @@ public class TagsController {
     }
 
     @ApiOperation(value = "GET A UNIQUE TAG")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Tag Not Found")})
     @GetMapping("/tag/{id}")
     public ResponseEntity<Tag> get(@PathVariable(value = "id") Long id) {
         Optional<Tag> optionalTag = this.tagRepository.findById(id);
@@ -58,12 +62,17 @@ public class TagsController {
     }
 
     @ApiOperation(value = "CREATE A TAG")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Tag Created")})
     @PostMapping("/tag")
     public ResponseEntity<Tag> create(@RequestBody @Valid final TagDTO tagDTO) {
         return new ResponseEntity<Tag>(this.tagRepository.saveAndFlush(convertToEntity(tagDTO)), HttpStatus.CREATED);
     }
 
     @ApiOperation(value = "UPDATE A TAG")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Updated Tag"),
+            @ApiResponse(code = 404, message = "Tag Not Found")
+    })
     @RequestMapping(value = "/tag/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Tag> update(@PathVariable(value = "id") Long id, @RequestBody @Valid Tag tag) {
         Optional<Tag> optionalTag = this.tagRepository.findById(id);
@@ -80,6 +89,10 @@ public class TagsController {
     }
 
     @ApiOperation(value = "DELETE A TAG")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Deleted Tag"),
+            @ApiResponse(code = 404, message = "Tag Not Found")
+    })
     @RequestMapping(value = "/tag/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         if (Optional.ofNullable(this.tagRepository.findById(id)).isPresent()) {

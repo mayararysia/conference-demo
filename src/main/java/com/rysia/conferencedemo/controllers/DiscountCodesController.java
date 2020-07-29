@@ -3,6 +3,8 @@ package com.rysia.conferencedemo.controllers;
 import com.rysia.conferencedemo.models.DiscountCode;
 import com.rysia.conferencedemo.repositories.DiscountCodeRepository;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +26,7 @@ public class DiscountCodesController {
     private DiscountCodeRepository discountCodeRepository;
 
     @ApiOperation(value = "LIST ALL DISCOUNT CODES")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Discount Not Found")})
     @GetMapping("/codes")
     public ResponseEntity<List<DiscountCode>> list() {
         List<DiscountCode> discountCodes = this.discountCodeRepository.findAll();
@@ -39,6 +42,7 @@ public class DiscountCodesController {
     }
 
     @ApiOperation(value = "GET A UNIQUE DISCOUNT CODE")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Discount Not Found")})
     @GetMapping("/code/{id}")
     public ResponseEntity<DiscountCode> get(@PathVariable(value = "id") Long id) {
         Optional<DiscountCode> optionalDiscountCode = this.discountCodeRepository.findById(id);
@@ -54,6 +58,7 @@ public class DiscountCodesController {
     }
 
     @ApiOperation(value = "CREATE A DISCOUNT CODE")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Discount Created")})
     @PostMapping("/code")
     public ResponseEntity<DiscountCode> create(@RequestBody @Valid final DiscountCode discountCode) {
         return new ResponseEntity<DiscountCode>(this.discountCodeRepository.saveAndFlush(discountCode),
@@ -61,6 +66,10 @@ public class DiscountCodesController {
     }
 
     @ApiOperation(value = "UPDATE A DISCOUNT CODE")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Updated Discount"),
+            @ApiResponse(code = 404, message = "Discount Not Found")
+    })
     @RequestMapping(value = "/code/{id}", method = RequestMethod.PUT)
     public ResponseEntity<DiscountCode> update(@PathVariable(value = "id") Long id, @RequestBody @Valid DiscountCode discountCode) {
         Optional<DiscountCode> optionalDiscountCode = this.discountCodeRepository.findById(id);
@@ -77,6 +86,10 @@ public class DiscountCodesController {
     }
 
     @ApiOperation(value = "DELETE A DISCOUNT CODE")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Deleted Discount Code"),
+            @ApiResponse(code = 404, message = "Discount Not Found")
+    })
     @RequestMapping(value = "/code/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         if (Optional.ofNullable(this.discountCodeRepository.findById(id)).isPresent()) {

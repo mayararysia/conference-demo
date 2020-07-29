@@ -4,6 +4,8 @@ import com.rysia.conferencedemo.dto.SessionScheduleDTO;
 import com.rysia.conferencedemo.models.SessionSchedule;
 import com.rysia.conferencedemo.repositories.SessionScheduleRepository;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ public class SessionSchedulesController {
     ModelMapper modelMapper;
 
     @ApiOperation(value = "LIST ALL SESSIONS SCHEDULES")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Sessions Schedules Not Found")})
     @GetMapping("/sessions/schedules")
     public ResponseEntity<List<SessionSchedule>> list() {
         List<SessionSchedule> sessionSchedules = this.sessionScheduleRepository.findAll();
@@ -44,6 +47,7 @@ public class SessionSchedulesController {
     }
 
     @ApiOperation(value = "GET A UNIQUE SESSION SCHEDULE")
+    @ApiResponses(value = {@ApiResponse(code = 404, message = "Session Schedule Not Found")})
     @GetMapping("/session/schedule/{id}")
     public ResponseEntity<SessionSchedule> get(@PathVariable(value = "id") Long id) {
         Optional<SessionSchedule> optionalSessionSchedule = this.sessionScheduleRepository.findById(id);
@@ -59,6 +63,7 @@ public class SessionSchedulesController {
     }
 
     @ApiOperation(value = "CREATE A SESSION SCHEDULE")
+    @ApiResponses(value = {@ApiResponse(code = 201, message = "Session Schedule Created")})
     @PostMapping("/session/schedule")
     public ResponseEntity<SessionScheduleDTO> create(@RequestBody @Valid final SessionScheduleDTO sessionScheduleDTO) {
         return new ResponseEntity<SessionScheduleDTO>(convertEntityToDTO(this.sessionScheduleRepository
@@ -66,6 +71,10 @@ public class SessionSchedulesController {
     }
 
     @ApiOperation(value = "UPDATE A SESSION SCHEDULE")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Updated Session Schedule"),
+            @ApiResponse(code = 404, message = "Session Schedule Not Found")
+    })
     @RequestMapping(value = "/session/schedule/{id}", method = RequestMethod.PUT)
     public ResponseEntity<SessionSchedule> update(@PathVariable(value = "id") Long id, @RequestBody @Valid SessionScheduleDTO sessionScheduleDTO) {
         Optional<SessionSchedule> optionalSessionSchedule = this.sessionScheduleRepository.findById(id);
@@ -82,6 +91,10 @@ public class SessionSchedulesController {
     }
 
     @ApiOperation(value = "DELETE A SESSION SCHEDULE")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Deleted Session Schedule"),
+            @ApiResponse(code = 404, message = "Session Schedule Not Found")
+    })
     @RequestMapping(value = "/session/schedule/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable(value = "id") Long id) {
         if (Optional.ofNullable(this.sessionScheduleRepository.findById(id).isPresent()).isPresent()) {
